@@ -28,7 +28,19 @@ DBWrapper::DBWrapper(const std::string& user,
         throw DBFailed(conn);
     }
 
+    PREPARE(regDevice, "insert into devices(\"user\", device, name) values ($1, $2, $3)", 3);
 
+}
+
+void DBWrapper::registerDevice(const int64_t user, const string &device, const string& name)
+{
+    const char * values[4]=       {
+                                    to_string(user).c_str(),
+                                    device.c_str(),
+                                    name.c_str()
+                                   };
+    const AutoRes res(PQexecPrepared(conn,regDevice,3,values,nullptr,nullptr,0));
+    DBFailed::check(conn,res,PGRES_COMMAND_OK);
 }
 
 DBWrapper::~DBWrapper()

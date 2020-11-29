@@ -24,10 +24,8 @@ void BotConnection::processMessage(const Message &m, const Api &api)
     locateUser(m.chat.id).processMessage(m,api);
 }
 
-void BotConnection::reg(const Message& m, const Api &api, const std::vector<string>& args)
-{
+BODY(reg)
 
-}
 
 void BotConnection::start(const Message& m, const Api &api, const std::vector<string>& args)
 {

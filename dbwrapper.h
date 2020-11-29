@@ -24,19 +24,20 @@ class DBWrapper
         std::string msg;
     public:
         DBFailed(const PGconn* conn);
-        const char* what() const noexcept;
+        const char* what() const noexcept override;
         static void check(const PGconn* conn, const PGresult * res, const ExecStatusType type);
     };
 
     PGconn* conn;
 
-
+    QUERY(regDevice)
 
 public:
     DBWrapper(const std::string& user,
               const std::string& password,
               const std::string& db,
               const std::string& host, const uint16_t port);
+    void registerDevice(const int64_t user, const std::string& device, const std::string &name);
     virtual ~DBWrapper();
 };
 

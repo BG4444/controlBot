@@ -92,3 +92,32 @@ User::User(DBWrapper& db, UCaseMap *umap, const string &token):db(db),
 
 }
 
+void User::reg(const tgbot::types::Message& m, const tgbot::methods::Api& api,  const std::vector<std::string>& args)
+{
+    if(args.size()==1 || args.size() > 3)
+    {
+        api.sendMessage(to_string(m.chat.id), "Укажите идентификатор устройства и, через пробел, его имя");
+    }
+    else
+    {
+        stringstream ans;
+        ans << "Устройство "
+            << args[1]
+            << " с именем "
+            << args[2];
+        try
+        {
+            db.registerDevice(m.chat.id, args[1], args[2]);
+            ans << " успешно зарегистрировано";
+
+        }
+        catch(exception& ex)
+        {
+            ans << " зарегистрировать не удалось.\nПричина: "
+                << ex.what()
+                << '\n';
+
+        }
+        api.sendMessage(to_string(m.chat.id), ans.str());
+    }
+}

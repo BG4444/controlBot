@@ -17,7 +17,6 @@ class User
 
     };
 
-
     DBWrapper& db;
     UCaseMap* umap;
     const std::string& token;
@@ -35,7 +34,7 @@ class User
     void pushState(const States newState);
 public:
     static std::string extractUserName(const tgbot::types::Message& m);
-
+    HEADER(reg);
     void processMessage(const tgbot::types::Message& m, const tgbot::methods::Api& api);
     User(DBWrapper &db,UCaseMap* umap,const std::string& token);
 };

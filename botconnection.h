@@ -4,6 +4,7 @@
 
 #include "dbwrapper.h"
 #include "user.h"
+#include <folly/AtomicHashMap.h>
 
 class BotConnection
 {
@@ -12,7 +13,7 @@ class BotConnection
     tgbot::LongPollBot& bot;
     DBWrapper& db;
     const std::string& token;
-    std::map<int64_t, User> users;
+    folly::AtomicHashMap<int64_t, User> users;
 
     HEADER(start)
     HEADER(reg)

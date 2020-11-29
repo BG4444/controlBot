@@ -47,16 +47,8 @@ void BotConnection::start(const Message& m, const Api &api, const std::vector<st
 }
 
 ::User &BotConnection::locateUser(const int64_t idChat)
-{
-    cout << this_thread::get_id() << endl;
-    const auto loc=users.find(idChat);
-    if(loc==users.end())
-    {
-        return users.emplace(std::piecewise_construct,
-                             std::forward_as_tuple(idChat),
-                             std::forward_as_tuple(db,umap,token)).first->second;
-    }
-    return loc->second;
+{    
+    return users.emplace(idChat, db, umap, token).first->second;
 }
 
 void BotConnection::logCmd(const Message &m, const std::vector<std::string>& args)
@@ -64,7 +56,7 @@ void BotConnection::logCmd(const Message &m, const std::vector<std::string>& arg
 
 }
 
-BotConnection::BotConnection(tgbot::LongPollBot& bot, DBWrapper &db, const string &token):bot(bot),db(db),token(token)
+BotConnection::BotConnection(tgbot::LongPollBot& bot, DBWrapper &db, const string &token):bot(bot),db(db),token(token), users(1024)
 {
     UErrorCode er=U_ZERO_ERROR;
     umap=ucasemap_open("utf-8",0,&er);

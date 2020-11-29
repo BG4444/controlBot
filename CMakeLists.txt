@@ -34,7 +34,14 @@ endif()
 add_executable(${PROJECT_NAME} "main.cpp"  "botconnection.cpp" "user.cpp" "dbwrapper.cpp" "opt-parser/optparser.cpp" "opt-parser/netportnumber.cpp")
 
 
-target_link_libraries(${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/folly-scratch/installed/folly/lib/libfolly.a  ${CMAKE_SOURCE_DIR}/xxtelebot/build/lib/libxxtelebot.a pq)
+target_link_libraries(${PROJECT_NAME}
+                      ${CMAKE_SOURCE_DIR}/folly-scratch/installed/folly/lib/libfolly.a
+                      ${CMAKE_SOURCE_DIR}/xxtelebot/build/lib/libxxtelebot.a
+                      pq
+                      dl
+                      glog
+                      ${CMAKE_SOURCE_DIR}/folly-scratch/installed/double-conversion-ReaOQxxmUymS1tTY1MdHw8fm5ML-dpFFLC7vcNYPBlI/lib/libdouble-conversion.a
+                     )
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
                 ${CURL_LIBRARIES}
@@ -43,7 +50,11 @@ target_link_libraries(${PROJECT_NAME}
                 Threads::Threads
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${PostgreSQL_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}/folly-scratch/installed/folly/include)
+target_include_directories(${PROJECT_NAME}
+        PRIVATE
+                ${PostgreSQL_INCLUDE_DIRS}
+                ${CMAKE_SOURCE_DIR}/folly-scratch/installed/folly/include
+                ${CMAKE_SOURCE_DIR}/folly-scratch/installed/double-conversion-ReaOQxxmUymS1tTY1MdHw8fm5ML-dpFFLC7vcNYPBlI/include)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})

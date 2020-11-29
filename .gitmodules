@@ -1,0 +1,6 @@
+[submodule "xxtelebot"]
+	path = xxtelebot
+	url = git@github.com:BG4444/xxtelebot.git
+[submodule "opt-parser"]
+	path = opt-parser
+	url = git@github.com:BG4444/opt-parser.git

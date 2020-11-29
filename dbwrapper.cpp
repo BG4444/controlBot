@@ -28,14 +28,16 @@ DBWrapper::DBWrapper(const std::string& user,
         throw DBFailed(conn);
     }
 
-    PREPARE(regDevice,      "insert into devices(\"user\", device, name) values ($1, $2, $3)", 3);
-    PREPARE(qrySetDevice,   "update status set status = status |  (1 << $2) where device = $1", 2);
-    PREPARE(qryUnSetDevice, "update status set status = status & ~(1 << $2) where device = $1", 2);
+    PREPARE(regDevice,         "insert into devices(\"user\", device, name) values ($1, $2, $3)", 3);
+    PREPARE(qrySetDevice,      "update status set status = status |  (1 << $2) where device = $1", 2);
+    PREPARE(qryUnSetDevice,    "update status set status = status & ~(1 << $2) where device = $1", 2);
+    PREPARE(qrySetDeviceAll,   "update status set status = ~0                  where device = $1", 1);
+    PREPARE(qryUnSetDeviceAll, "update status set status =  0                  where device = $1", 1);
 }
 
 void DBWrapper::registerDevice(const int64_t user, const string &device, const string& name)
 {
-    const char * values[]=        {
+    const char * values[]=         {
                                     to_string(user).c_str(),
                                     device.c_str(),
                                     name.c_str()
@@ -46,11 +48,20 @@ void DBWrapper::registerDevice(const int64_t user, const string &device, const s
 
 void DBWrapper::setDevice(const string &device, const int port, const bool mode)
 {
-    const char * values[]=        {
+    const char * values[]=         {
                                     device.c_str(),
                                     to_string(port).c_str()
                                    };
     const AutoRes res(PQexecPrepared(conn,( mode ? qrySetDevice : qryUnSetDevice ), 2, values, nullptr, nullptr, 0));
+    DBFailed::check(conn,res,PGRES_COMMAND_OK);
+}
+
+void DBWrapper::setDeviceAll(const string &device, const bool mode)
+{
+    const char * values[]=         {
+                                    device.c_str()
+                                   };
+    const AutoRes res(PQexecPrepared(conn,( mode ? qrySetDeviceAll : qryUnSetDeviceAll ), 1, values, nullptr, nullptr, 0));
     DBFailed::check(conn,res,PGRES_COMMAND_OK);
 }
 

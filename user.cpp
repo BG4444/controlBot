@@ -134,38 +134,63 @@ void User::iNeedPort(const tgbot::types::Message& m, const tgbot::methods::Api& 
 void User::doSetPort(const tgbot::methods::Api& api, const tgbot::types::Message& m, const bool mode)
 {
     stringstream ans;
-    ans << "Устройство "
-        << lastDevice
-        << " порт "
-        << *port
-        << " установлен в "
-        << mode
-        << '\n';
-    db.setDevice(lastDevice, *port, mode);
+    if(port)
+    {
+        ans << "Устройство "
+            << lastDevice
+            << " порт "
+            << *port
+            << " установлен в "
+            << mode
+            << '\n';
+        db.setDevice(lastDevice, *port, mode);
+    }
+    else
+    {
+        ans << "Устройство "
+            << lastDevice
+            << " все порты установлены в "
+            << mode
+            << '\n';
+        db.setDeviceAll(lastDevice, mode);
+    }
     api.sendMessage(to_string(m.chat.id), ans.str());
 }
 
 void User::setPort(const tgbot::types::Message& m, const tgbot::methods::Api& api,  const std::vector<std::string>& args, const bool mode)
 {
-    if(args.size()==1)
+    switch(args.size())
     {
-        if(lastDevice.empty() || !port)
+        case 1:
+        {
+            if(lastDevice.empty())
+            {
+                iNeedPort(m, api);
+            }
+            else
+            {
+                doSetPort(api, m, mode);
+            }
+            break;
+        }
+        case 2:
+        {
+            lastDevice = args[1];
+            port.reset();
+            doSetPort(api, m, mode);
+            break;
+        }
+        case 3:
+        {
+            lastDevice = args[1];
+            port = stoll(args[2]);
+            doSetPort(api, m, mode);
+            break;
+        }
+        default:
         {
             iNeedPort(m, api);
+            break;
         }
-        else
-        {
-            doSetPort(api, m, mode);
-        }
-    }
-    else if(args.size()==3)
-    {
-        lastDevice = args[1];
-        port = stoll(args[2]);
-        doSetPort(api, m, mode);
-    }
-    else
-    {
-        iNeedPort(m, api);
     }
 }

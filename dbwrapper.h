@@ -33,7 +33,8 @@ class DBWrapper
     QUERY(regDevice)
     QUERY(qrySetDevice)
     QUERY(qryUnSetDevice)
-
+    QUERY(qrySetDeviceAll)
+    QUERY(qryUnSetDeviceAll)
 public:
     DBWrapper(const std::string& user,
               const std::string& password,
@@ -41,6 +42,7 @@ public:
               const std::string& host, const uint16_t port);
     void registerDevice(const int64_t user, const std::string& device, const std::string &name);
     void setDevice(const std::string& device, const int port, const bool mode);
+    void setDeviceAll(const std::string& device, const bool mode);
     virtual ~DBWrapper();
 };
 

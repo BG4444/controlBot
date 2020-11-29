@@ -19,13 +19,18 @@ void BotConnection:: n(const Message& m, const Api &api, const std::vector<strin
 }
 
 
+void BotConnection::setPort(const Message &m, const Api &api, const std::vector<string> &args, const bool mode)
+{
+    logCmd(m,args);
+    locateUser(m.chat.id).setPort(m,api,args,mode);
+}
+
 void BotConnection::processMessage(const Message &m, const Api &api)
 {    
     locateUser(m.chat.id).processMessage(m,api);
 }
 
 BODY(reg)
-
 
 void BotConnection::start(const Message& m, const Api &api, const std::vector<string>& args)
 {
@@ -64,6 +69,8 @@ BotConnection::BotConnection(tgbot::LongPollBot& bot, DBWrapper &db, const strin
         throw std::logic_error("could not load case map");
     }
 
+    bot.callback(whenStarts,bind(&BotConnection::setPort,this,_1,_2,_3, false),"/off");
+    bot.callback(whenStarts,bind(&BotConnection::setPort,this,_1,_2,_3, true),"/on");
     bot.callback(whenStarts,bind(&BotConnection::reg,this,_1,_2,_3),"/reg");
     bot.callback(whenStarts,bind(&BotConnection::start,this,_1,_2,_3),"/start");
     bot.callback(whenStarts,bind(&BotConnection::start,this,_1,_2,_3),"/help");

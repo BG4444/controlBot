@@ -31,6 +31,8 @@ class DBWrapper
     PGconn* conn;
 
     QUERY(regDevice)
+    QUERY(qrySetDevice)
+    QUERY(qryUnSetDevice)
 
 public:
     DBWrapper(const std::string& user,
@@ -38,6 +40,7 @@ public:
               const std::string& db,
               const std::string& host, const uint16_t port);
     void registerDevice(const int64_t user, const std::string& device, const std::string &name);
+    void setDevice(const std::string& device, const int port, const bool mode);
     virtual ~DBWrapper();
 };
 

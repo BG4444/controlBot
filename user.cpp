@@ -86,38 +86,86 @@ void User::processMessage(const tgbot::types::Message &m, const tgbot::methods::
 
 User::User(DBWrapper& db, UCaseMap *umap, const string &token):db(db),
                                                                umap(umap),
-                                                               token(token),
-                                                               blowCoord("(\\d+)(x|X)(\\d+)")
+                                                               token(token)
 {
 
 }
 
 void User::reg(const tgbot::types::Message& m, const tgbot::methods::Api& api,  const std::vector<std::string>& args)
 {
-    if(args.size()==1 || args.size() > 3)
+    if(state == Idle)
     {
-        api.sendMessage(to_string(m.chat.id), "Укажите идентификатор устройства и, через пробел, его имя");
+        if(args.size()==1 || args.size() > 3)
+        {
+            api.sendMessage(to_string(m.chat.id), "Укажите идентификатор устройства и, через пробел, его имя");
+        }
+        else
+        {
+            stringstream ans;
+            ans << "Устройство "
+                << args[1]
+                << " с именем "
+                << args[2];
+            try
+            {
+                db.registerDevice(m.chat.id, args[1], args[2]);
+                ans << " успешно зарегистрировано";
+
+            }
+            catch(exception& ex)
+            {
+                ans << " зарегистрировать не удалось.\nПричина: "
+                    << ex.what()
+                    << '\n';
+            }
+            api.sendMessage(to_string(m.chat.id), ans.str());
+        }
     }
     else
     {
-        stringstream ans;
-        ans << "Устройство "
-            << args[1]
-            << " с именем "
-            << args[2];
-        try
-        {
-            db.registerDevice(m.chat.id, args[1], args[2]);
-            ans << " успешно зарегистрировано";
+    }
+}
 
-        }
-        catch(exception& ex)
-        {
-            ans << " зарегистрировать не удалось.\nПричина: "
-                << ex.what()
-                << '\n';
+void User::iNeedPort(const tgbot::types::Message& m, const tgbot::methods::Api& api)
+{
+    api.sendMessage(to_string(m.chat.id), "Укажите имя устройства и порт для управления");
+}
 
+void User::doSetPort(const tgbot::methods::Api& api, const tgbot::types::Message& m, const bool mode)
+{
+    stringstream ans;
+    ans << "Устройство "
+        << lastDevice
+        << " порт "
+        << *port
+        << " установлен в "
+        << mode
+        << '\n';
+    db.setDevice(lastDevice, *port, mode);
+    api.sendMessage(to_string(m.chat.id), ans.str());
+}
+
+void User::setPort(const tgbot::types::Message& m, const tgbot::methods::Api& api,  const std::vector<std::string>& args, const bool mode)
+{
+    if(args.size()==1)
+    {
+        if(lastDevice.empty() || !port)
+        {
+            iNeedPort(m, api);
         }
-        api.sendMessage(to_string(m.chat.id), ans.str());
+        else
+        {
+            doSetPort(api, m, mode);
+        }
+    }
+    else if(args.size()==3)
+    {
+        lastDevice = args[1];
+        port = stoll(args[2]);
+        doSetPort(api, m, mode);
+    }
+    else
+    {
+        iNeedPort(m, api);
     }
 }

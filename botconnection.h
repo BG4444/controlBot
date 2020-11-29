@@ -17,6 +17,7 @@ class BotConnection
 
     HEADER(start)
     HEADER(reg)
+    void setPort(const tgbot::types::Message& m, const tgbot::methods::Api& api,  const std::vector<std::string>& args, const bool mode);
 
     void processMessage(const tgbot::types::Message& m, const tgbot::methods::Api& api);
     User &locateUser(const int64_t idChat);

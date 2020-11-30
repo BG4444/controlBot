@@ -29,10 +29,10 @@ DBWrapper::DBWrapper(const std::string& user,
     }
 
     PREPARE(regDevice,         "insert into devices(\"user\", device, name) values ($1, $2, $3)", 3);
-    PREPARE(qrySetDevice,      "update status set status = status |  (1 << $2) where device = $1", 2);
-    PREPARE(qryUnSetDevice,    "update status set status = status & ~(1 << $2) where device = $1", 2);
-    PREPARE(qrySetDeviceAll,   "update status set status = ~0                  where device = $1", 1);
-    PREPARE(qryUnSetDeviceAll, "update status set status =  0                  where device = $1", 1);
+    PREPARE(qrySetDevice,      "update status set status = status |  (1 << $2) where device = (select device from devices where name = $1)", 2);
+    PREPARE(qryUnSetDevice,    "update status set status = status & ~(1 << $2) where device = (select device from devices where name = $1)", 2);
+    PREPARE(qrySetDeviceAll,   "update status set status = ~0                  where device = (select device from devices where name = $1)", 1);
+    PREPARE(qryUnSetDeviceAll, "update status set status =  0                  where device = (select device from devices where name = $1)", 1);
 }
 
 void DBWrapper::registerDevice(const int64_t user, const string &device, const string& name)
@@ -53,6 +53,7 @@ void DBWrapper::setDevice(const string &device, const int port, const bool mode)
                                     to_string(port).c_str()
                                    };
     const AutoRes res(PQexecPrepared(conn,( mode ? qrySetDevice : qryUnSetDevice ), 2, values, nullptr, nullptr, 0));
+
     DBFailed::check(conn,res,PGRES_COMMAND_OK);
 }
 

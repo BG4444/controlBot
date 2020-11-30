@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
 #include <string>
+#include <mutex>
 #include "xxtelebot/include/tgbot/bot.h"
 #include "xxtelebot/include/tgbot/types.h"
 #include "xxtelebot/include/tgbot/utils/make_ptr.h"
@@ -29,7 +30,7 @@ class DBWrapper
     };
 
     PGconn* conn;
-
+    std::mutex mtx;
     QUERY(regDevice)
     QUERY(qrySetDevice)
     QUERY(qryUnSetDevice)

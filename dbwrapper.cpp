@@ -37,6 +37,7 @@ DBWrapper::DBWrapper(const std::string& user,
 
 void DBWrapper::registerDevice(const int64_t user, const string &device, const string& name)
 {
+    lock_guard lck(mtx);
     const char * values[]=         {
                                     to_string(user).c_str(),
                                     device.c_str(),
@@ -48,6 +49,7 @@ void DBWrapper::registerDevice(const int64_t user, const string &device, const s
 
 void DBWrapper::setDevice(const string &device, const int port, const bool mode)
 {
+    lock_guard lck(mtx);
     const char * values[]=         {
                                     device.c_str(),
                                     to_string(port).c_str()
@@ -59,6 +61,7 @@ void DBWrapper::setDevice(const string &device, const int port, const bool mode)
 
 void DBWrapper::setDeviceAll(const string &device, const bool mode)
 {
+    lock_guard lck(mtx);
     const char * values[]=         {
                                     device.c_str()
                                    };

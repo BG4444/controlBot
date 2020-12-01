@@ -45,13 +45,12 @@ target_link_libraries(${PROJECT_NAME}
                 ${JSONCPP_LIBRARIES}
                 ${FOLLY_LIBRARIES}
                 ${GCRYPT_LIBRARY}
-                Threads::Threads
-)
+                Threads::Threads)
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE
                 ${PostgreSQL_INCLUDE_DIRS}
-                ${FOLLY_INCLUDE_DIRS}
+                ${FOLLY_INCLUDE_DIRS})
 
 target_link_libraries(${PROJECT_NAME} ${FOLLY_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${ICU_LIBRARIES})

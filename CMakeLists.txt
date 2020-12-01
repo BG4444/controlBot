@@ -16,6 +16,7 @@ find_package(PostgreSQL REQUIRED)
 find_package(Threads REQUIRED)
 find_library(GCRYPT_LIBRARY NAMES gcrypt libgcrypt)
 find_package(ICU 52.0 COMPONENTS uc  REQUIRED)
+find_package(folly REQUIRED)
 
 
 pkg_check_modules(JSONCPP QUIET jsoncpp)
@@ -35,17 +36,14 @@ add_executable(${PROJECT_NAME} "main.cpp"  "botconnection.cpp" "user.cpp" "dbwra
 
 
 target_link_libraries(${PROJECT_NAME}
-                      ${CMAKE_SOURCE_DIR}/folly-scratch/installed/folly/lib/libfolly.a
                       ${CMAKE_SOURCE_DIR}/xxtelebot/build/lib/libxxtelebot.a
                       pq
-                      dl
-                      glog
-                      ${CMAKE_SOURCE_DIR}/folly-scratch/installed/double-conversion-ReaOQxxmUymS1tTY1MdHw8fm5ML-dpFFLC7vcNYPBlI/lib/libdouble-conversion.a
                      )
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
                 ${CURL_LIBRARIES}
                 ${JSONCPP_LIBRARIES}
+                ${FOLLY_LIBRARIES}
                 ${GCRYPT_LIBRARY}
                 Threads::Threads
 )
@@ -53,9 +51,7 @@ target_link_libraries(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME}
         PRIVATE
                 ${PostgreSQL_INCLUDE_DIRS}
-                ${CMAKE_SOURCE_DIR}/folly-scratch/installed/folly/include
-                ${CMAKE_SOURCE_DIR}/folly-scratch/installed/double-conversion-ReaOQxxmUymS1tTY1MdHw8fm5ML-dpFFLC7vcNYPBlI/include)
-include_directories(${ImageMagick_INCLUDE_DIRS})
+                ${FOLLY_INCLUDE_DIRS}
 
-target_link_libraries(${PROJECT_NAME} ${ImageMagick_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${FOLLY_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${ICU_LIBRARIES})

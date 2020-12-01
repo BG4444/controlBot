@@ -4,3 +4,6 @@
 [submodule "opt-parser"]
 	path = opt-parser
 	url = git@github.com:BG4444/opt-parser.git
+[submodule "folly"]
+	path = folly
+	url = git@github.com:facebook/folly.git

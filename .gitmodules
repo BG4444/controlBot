@@ -7,3 +7,6 @@
 [submodule "folly"]
 	path = folly
 	url = git@github.com:facebook/folly.git
+[submodule "glog"]
+	path = glog
+	url = git@github.com:google/glog.git

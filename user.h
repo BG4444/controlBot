@@ -36,7 +36,7 @@ class User
     void iNeedPort(const tgbot::types::Message& m, const tgbot::methods::Api& api);
 public:
     static std::string extractUserName(const tgbot::types::Message& m);
-    HEADER(reg);
+    HEADER(reg)
     void setPort(const tgbot::types::Message& m, const tgbot::methods::Api& api,  const std::vector<std::string>& args, const bool mode);
     void processMessage(const tgbot::types::Message& m, const tgbot::methods::Api& api);
     User(DBWrapper &db,UCaseMap* umap,const std::string& token);

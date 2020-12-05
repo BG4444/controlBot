@@ -143,7 +143,7 @@ void User::doSetPort(const tgbot::methods::Api& api, const tgbot::types::Message
             << " установлен в "
             << mode
             << '\n';
-        db.setDevice(lastDevice, *port, mode);
+        db.setDevice(lastDevice, *port, mode, m.chat.id);
     }
     else
     {
@@ -152,7 +152,7 @@ void User::doSetPort(const tgbot::methods::Api& api, const tgbot::types::Message
             << " все порты установлены в "
             << mode
             << '\n';
-        db.setDeviceAll(lastDevice, mode);
+        db.setDeviceAll(lastDevice, mode, m.chat.id);
     }
     api.sendMessage(to_string(m.chat.id), ans.str());
 }

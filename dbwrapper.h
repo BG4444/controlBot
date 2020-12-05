@@ -42,8 +42,8 @@ public:
               const std::string& db,
               const std::string& host, const uint16_t port);
     void registerDevice(const int64_t user, const std::string& device, const std::string &name);
-    void setDevice(const std::string& device, const int port, const bool mode);
-    void setDeviceAll(const std::string& device, const bool mode);
+    void setDevice(const std::string& device, const int port, const bool mode, const int64_t user);
+    void setDeviceAll(const std::string& device, const bool mode, const int64_t user);
     virtual ~DBWrapper();
 };
 

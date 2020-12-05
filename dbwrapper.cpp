@@ -29,10 +29,10 @@ DBWrapper::DBWrapper(const std::string& user,
     }
 
     PREPARE(regDevice,         "insert into devices(\"user\", device, name) values ($1, $2, $3)", 3);
-    PREPARE(qrySetDevice,      "update status set status = status |  (1 << $2) where device = (select device from devices where name = $1)", 2);
-    PREPARE(qryUnSetDevice,    "update status set status = status & ~(1 << $2) where device = (select device from devices where name = $1)", 2);
-    PREPARE(qrySetDeviceAll,   "update status set status = ~0                  where device = (select device from devices where name = $1)", 1);
-    PREPARE(qryUnSetDeviceAll, "update status set status =  0                  where device = (select device from devices where name = $1)", 1);
+    PREPARE(qrySetDevice,      "update status set status = status |  (1 << $2) where device = (select device from devices where name = $1 and user = $3)", 3);
+    PREPARE(qryUnSetDevice,    "update status set status = status & ~(1 << $2) where device = (select device from devices where name = $1 and user = $3)", 3);
+    PREPARE(qrySetDeviceAll,   "update status set status = ~0                  where device = (select device from devices where name = $1 and user = $2)", 2);
+    PREPARE(qryUnSetDeviceAll, "update status set status =  0                  where device = (select device from devices where name = $1 and user = $2)", 2);
 }
 
 void DBWrapper::registerDevice(const int64_t user, const string &device, const string& name)
@@ -47,25 +47,27 @@ void DBWrapper::registerDevice(const int64_t user, const string &device, const s
     DBFailed::check(conn,res,PGRES_COMMAND_OK);
 }
 
-void DBWrapper::setDevice(const string &device, const int port, const bool mode)
+void DBWrapper::setDevice(const string &device, const int port, const bool mode, const int64_t user)
 {
     lock_guard lck(mtx);
     const char * values[]=         {
                                     device.c_str(),
-                                    to_string(port).c_str()
+                                    to_string(port).c_str(),
+                                    to_string(user).c_str()
                                    };
-    const AutoRes res(PQexecPrepared(conn,( mode ? qrySetDevice : qryUnSetDevice ), 2, values, nullptr, nullptr, 0));
+    const AutoRes res(PQexecPrepared(conn,( mode ? qrySetDevice : qryUnSetDevice ), 3, values, nullptr, nullptr, 0));
 
     DBFailed::check(conn,res,PGRES_COMMAND_OK);
 }
 
-void DBWrapper::setDeviceAll(const string &device, const bool mode)
+void DBWrapper::setDeviceAll(const string &device, const bool mode, const int64_t user)
 {
     lock_guard lck(mtx);
     const char * values[]=         {
-                                    device.c_str()
+                                    device.c_str(),
+                                    to_string(user).c_str()
                                    };
-    const AutoRes res(PQexecPrepared(conn,( mode ? qrySetDeviceAll : qryUnSetDeviceAll ), 1, values, nullptr, nullptr, 0));
+    const AutoRes res(PQexecPrepared(conn,( mode ? qrySetDeviceAll : qryUnSetDeviceAll ), 2, values, nullptr, nullptr, 0));
     DBFailed::check(conn,res,PGRES_COMMAND_OK);
 }
 

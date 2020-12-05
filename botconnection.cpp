@@ -1,7 +1,7 @@
-#include "botconnection.h"
 #include <sstream>
 #include <thread>
 #include "xxtelebot/include/tgbot/methods/types.h"
+#include "botconnection.h"
 
 
 using namespace tgbot;
@@ -35,18 +35,23 @@ BODY(reg)
 void BotConnection::start(const Message& m, const Api &api, const std::vector<string>& args)
 {
     logCmd(m,args);
-    api.sendMessage(to_string(m.chat.id),"Привет! Я простой бот для штабных тренировок."
-                                         "Я умею:\nзапоминать новое штабное /new.\n"
-                                         "Выдавать штабное по имени /give.\n"
-                                         "Выдавать следующее нерешенное штабное /next.\n"
-                                         "Выдавать список известных мне штабных /list.\n"
-                                         "Дать подсказку к решению штабного /hint.\n"
-                                         "Выдать статистику решения /stat.\n"
-                                         "Удалить задание /delete.\n"
-                                         "Разрезать картинку - команда /split, например\n"
-                                         "/split 6 - резать горизонтально на 6 частей\n"
-                                         "/split 3x6 - резать по горизонтали на 3, а по вертикали на 6\n"
-                                         "Резать можно во время решения штабных.\nУспехов!");
+    api.sendMessage(to_string(m.chat.id),R"(
+Управление ботом:
+/reg _ИД_ _ИМЯ_ зарегистрировать новое устройство
+
+/on  включить все каналы на устройстве, которое
+     управлялось в последний раз
+
+/off отключить все каналы на устройстве, которое
+     управлялось в последний раз
+
+/on (/off)  _ИМЯ_         вклюить (отключить) каналы на
+            устройстве _ИМЯ_
+
+/on (/off)  _ИМЯ_ _КАНАЛ_ вклюить (отключить) _КАНАЛ_ на
+            устройстве _ИМЯ_
+)",
+                    methods::types::ParseMode::MARKDOWN);
 }
 
 ::User &BotConnection::locateUser(const int64_t idChat)

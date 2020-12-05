@@ -8,9 +8,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic  -DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Werror")
 
 find_package(PkgConfig REQUIRED)
+find_package(gflags REQUIRED)
 find_package(CURL REQUIRED)
 find_package(PostgreSQL REQUIRED)
 find_package(Threads REQUIRED)
@@ -37,13 +38,14 @@ add_executable(${PROJECT_NAME} "main.cpp"  "botconnection.cpp" "user.cpp" "dbwra
 
 target_link_libraries(${PROJECT_NAME}
                       ${CMAKE_SOURCE_DIR}/xxtelebot/build/lib/libxxtelebot.a
-                      pq
                      )
 target_link_libraries(${PROJECT_NAME}
         PRIVATE
                 ${CURL_LIBRARIES}
                 ${JSONCPP_LIBRARIES}
+                ${GFLAGS_LIBRARIES}
                 ${FOLLY_LIBRARIES}
+                pq
                 ${GCRYPT_LIBRARY}
                 Threads::Threads)
 

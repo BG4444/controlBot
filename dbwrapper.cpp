@@ -29,10 +29,10 @@ DBWrapper::DBWrapper(const std::string& user,
     }
 
     PREPARE(regDevice,         "insert into devices(\"user\", device, name) values ($1, $2, $3)", 3);
-    PREPARE(qrySetDevice,      "update status set status = status |  (1 << $2) where device = (select device from devices where name = $1 and user = $3)", 3);
-    PREPARE(qryUnSetDevice,    "update status set status = status & ~(1 << $2) where device = (select device from devices where name = $1 and user = $3)", 3);
-    PREPARE(qrySetDeviceAll,   "update status set status = ~0                  where device = (select device from devices where name = $1 and user = $2)", 2);
-    PREPARE(qryUnSetDeviceAll, "update status set status =  0                  where device = (select device from devices where name = $1 and user = $2)", 2);
+    PREPARE(qrySetDevice,      "update status set status = status |  (1 << $2) where device = (select device from devices where name = $1 and \"user\" = $3)", 3);
+    PREPARE(qryUnSetDevice,    "update status set status = status & ~(1 << $2) where device = (select device from devices where name = $1 and \"user\" = $3)", 3);
+    PREPARE(qrySetDeviceAll,   "update status set status = ~0                  where device = (select device from devices where name = $1 and \"user\" = $2)", 2);
+    PREPARE(qryUnSetDeviceAll, "update status set status =  0                  where device = (select device from devices where name = $1 and \"user\" = $2)", 2);
 }
 
 void DBWrapper::registerDevice(const int64_t user, const string &device, const string& name)
